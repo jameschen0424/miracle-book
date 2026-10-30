@@ -4,8 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#eee8d9">
-  <meta name="description" content="給自己一點安靜，翻開一頁日常的心靈練習。">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta name="description" content="給自己一點安靜，翻開一頁日常的心靈練習。陰陽相生，動靜有時。">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="奇蹟之書 · 留一頁給自己">
+  <meta property="og:description" content="給自己一點安靜，翻開一頁日常的心靈練習。陰陽相生，動靜有時。">
+  <meta property="og:image" content="assets/ink-landscape.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="奇蹟之書 · 留一頁給自己">
+  <meta name="twitter:description" content="給自己一點安靜，翻開一頁日常的心靈練習。">
+  <meta name="twitter:image" content="assets/ink-landscape.png">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="manifest" href="manifest.json">
@@ -18,7 +26,6 @@
     <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 5c-3-2-6-2-9-1v15c3-1 6-1 9 1 3-2 6-2 9-1V4c-3-1-6-1-9 1Zm0 0v15"/></symbol>
     <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.6 6.2.9-4.5 4.4 1.1 6.1-5.5-2.9L6.5 20l1.1-6.1-4.5-4.4 6.2-.9Z"/></symbol>
     <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 11a9 9 0 1 1 2.5 7M3 5v6h6m3-4v6l4 2"/></symbol>
-    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 7h16M4 17h16M8 4v6m8 4v6"/></symbol>
     <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6"/></symbol>
     <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
     <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 2 2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4ZM19 2v4m-2-2h4"/></symbol>
@@ -33,7 +40,9 @@
   <div class="app-shell">
     <header class="app-header">
       <a class="brand" href="#today" aria-label="奇蹟之書首頁"><span class="brand-mark"><svg class="icon"><use href="#i-taiji"/></svg></span><span>奇蹟之書<small>THE MIRACLE BOOK</small></span></a>
-      <div class="header-actions"><button class="icon-button" id="sound-button" aria-label="關閉背景音樂" aria-pressed="true"><svg class="icon"><use href="#i-music"/></svg><span class="sound-off" aria-hidden="true"></span></button><button class="icon-button" id="settings-button" aria-label="開啟設定"><svg class="icon"><use href="#i-settings"/></svg></button></div>
+      <div class="header-actions">
+        <button class="icon-button" id="sound-button" aria-label="關閉背景音樂" aria-pressed="true"><svg class="icon"><use href="#i-music"/></svg><span class="sound-off" aria-hidden="true"></span></button>
+      </div>
     </header>
     <main id="main-content" tabindex="-1">
       <div id="loading-view" class="loading-state" role="status"><span class="loading-symbol">✧</span><p>正在為你準備一頁安靜…</p></div>
@@ -61,40 +70,91 @@
       </section>
       <section id="reading-view" class="view reading-view" aria-labelledby="reading-title" hidden>
         <div class="reading-toolbar"><button class="text-button" id="choose-again"><svg class="icon flip"><use href="#i-arrow"/></svg>重新抽卡</button><span class="quiet-label">一頁，一次相遇</span></div>
-        <article class="reading-paper" id="reading-paper"><div class="paper-top"><span id="reading-day">DAY 001</span><span id="reading-theme"></span></div><span class="paper-star" aria-hidden="true"><svg class="icon"><use href="#i-taiji"/></svg></span><div class="paper-divider" aria-hidden="true"><span></span>✦<span></span></div><div id="reading-content"><h1 id="reading-title" tabindex="-1"></h1><p class="reading-quote" id="reading-quote"></p></div><div id="reading-content-pages" class="reading-content-pages" hidden><button id="reading-part-prev" class="text-button" type="button">← 上一段</button><span id="reading-part-position" aria-live="polite">1 / 1</span><button id="reading-part-next" class="text-button" type="button">下一段 →</button></div><div class="paper-bottom"><span>THE MIRACLE BOOK</span><span>留一頁給自己</span></div></article>
-        <div class="reading-actions"><button class="action-button" id="favorite-button" aria-pressed="false"><svg class="icon"><use href="#i-star"/></svg><span>收藏</span></button><button class="action-button" id="copy-button"><svg class="icon"><use href="#i-copy"/></svg><span>複製</span></button><button class="action-button" id="share-button"><svg class="icon"><use href="#i-share"/></svg><span>分享</span></button><button class="action-button" id="poster-button"><svg class="icon"><use href="#i-image"/></svg><span>製作日簽</span></button></div>
-        <div class="page-navigation"><button class="text-button" id="previous-button"><svg class="icon flip"><use href="#i-chevron"/></svg>前一頁</button><span id="page-position"></span><button class="text-button" id="next-button">下一頁<svg class="icon"><use href="#i-chevron"/></svg></button></div><button class="source-button" id="source-button">金句來源與說明 <span>ⓘ</span></button>
+        <article class="reading-paper" id="reading-paper">
+          <div class="paper-top">
+            <span id="reading-day">DAY 001</span>
+            <span class="paper-star-ornament" aria-hidden="true">✦</span>
+          </div>
+          <div class="reading-theme-bar">
+            <span id="reading-theme" class="reading-theme-tag">WEEKLY THEME 1-7 回歸真實的自己</span>
+          </div>
+          <div id="reading-content">
+            <h1 id="reading-title" tabindex="-1"></h1>
+            <p class="reading-quote" id="reading-quote"></p>
+          </div>
+          <div id="reading-content-pages" class="reading-content-pages" hidden>
+            <button id="reading-part-prev" class="text-button" type="button">← 上一段</button>
+            <span id="reading-part-position" aria-live="polite">1 / 1</span>
+            <button id="reading-part-next" class="text-button" type="button">下一段 →</button>
+          </div>
+          <div class="paper-bottom">
+            <span>THE MIRACLE BOOK</span>
+            <span>留一頁給自己</span>
+          </div>
+        </article>
+        <div class="reading-actions">
+          <button class="action-button" id="favorite-button" aria-pressed="false"><svg class="icon"><use href="#i-star"/></svg><span>收藏</span></button>
+          <button class="action-button" id="copy-button"><svg class="icon"><use href="#i-copy"/></svg><span>複製</span></button>
+          <button class="action-button" id="share-button"><svg class="icon"><use href="#i-share"/></svg><span>分享</span></button>
+          <button class="action-button" id="poster-button"><svg class="icon"><use href="#i-image"/></svg><span>製作日簽</span></button>
+        </div>
+        <div class="page-navigation">
+          <button class="text-button" id="previous-button"><svg class="icon flip"><use href="#i-chevron"/></svg>前一頁</button>
+          <span id="page-position"></span>
+          <button class="text-button" id="next-button">下一頁<svg class="icon"><use href="#i-chevron"/></svg></button>
+        </div>
       </section>
-      <section id="library-view" class="view library-view" aria-labelledby="library-title" hidden><div class="section-intro"><p id="library-eyebrow" class="eyebrow">PAGES TO KEEP</p><h1 id="library-title" tabindex="-1">收藏的微光</h1><p id="library-description">把有共鳴的文字，留在隨時能回來的地方。</p></div><div class="library-heading"><span id="library-count"></span><button id="clear-history" class="text-button" hidden>清除足跡</button></div><div id="library-list"></div><div id="library-pages" class="library-pages" hidden><button type="button" id="library-prev" class="text-button">← 上一頁</button><span id="library-page" aria-live="polite">1 / 1</span><button type="button" id="library-next" class="text-button">下一頁 →</button></div><div id="library-empty" class="empty-state" hidden><svg class="icon" id="empty-icon"><use href="#i-star"/></svg><h2 id="empty-title">為自己收藏一點微光</h2><p id="empty-copy">閱讀時輕點星號，喜歡的篇章就會留在這裡。</p><button class="secondary-button" id="empty-read">去翻一頁</button></div></section>
+      <section id="library-view" class="view library-view" aria-labelledby="library-title" hidden>
+        <div class="section-intro">
+          <p id="library-eyebrow" class="eyebrow">PAGES TO KEEP</p>
+          <h1 id="library-title" tabindex="-1">收藏的微光</h1>
+          <p id="library-description">把有共鳴的文字，留在隨時能回來的地方。</p>
+        </div>
+        <div class="library-heading">
+          <span id="library-count"></span>
+          <button id="clear-history" class="text-button" hidden>清除足跡</button>
+        </div>
+        <div id="library-list"></div>
+        <div id="library-pages" class="library-pages" hidden>
+          <button type="button" id="library-prev" class="text-button">← 上一頁</button>
+          <span id="library-page" aria-live="polite">1 / 1</span>
+          <button type="button" id="library-next" class="text-button">下一頁 →</button>
+        </div>
+        <div id="library-empty" class="empty-state" hidden>
+          <svg class="icon" id="empty-icon"><use href="#i-star"/></svg>
+          <h2 id="empty-title">為自己收藏一點微光</h2>
+          <p id="empty-copy">閱讀時輕點星號，喜歡的篇章就會留在這裡。</p>
+          <button class="secondary-button" id="empty-read">去翻一頁</button>
+        </div>
+      </section>
     </main>
-    <nav class="bottom-nav" aria-label="主要導覽"><button class="nav-item active" data-tab="today" aria-current="page"><svg class="icon"><use href="#i-taiji"/></svg><span>今日指引</span><i></i></button><button class="nav-item" data-tab="favorites"><svg class="icon"><use href="#i-star"/></svg><span>我的收藏</span><i></i></button><button class="nav-item" data-tab="history"><svg class="icon"><use href="#i-history"/></svg><span>閱讀足跡</span><i></i></button></nav>
+    <nav class="bottom-nav" aria-label="主要導覽">
+      <button class="nav-item active" data-tab="today" aria-current="page"><svg class="icon"><use href="#i-taiji"/></svg><span>今日指引</span><i></i></button>
+      <button class="nav-item" data-tab="favorites"><svg class="icon"><use href="#i-star"/></svg><span>我的收藏</span><i></i></button>
+      <button class="nav-item" data-tab="history"><svg class="icon"><use href="#i-history"/></svg><span>閱讀足跡</span><i></i></button>
+    </nav>
   </div>
 
-  <dialog id="settings-dialog" aria-labelledby="settings-title">
-    <div class="dialog-header"><div><p class="eyebrow">動 靜 皆 相 宜</p><h2 id="settings-title">用舒服的方式閱讀</h2></div><button class="icon-button" data-close="settings-dialog" aria-label="關閉設定"><svg class="icon"><use href="#i-close"/></svg></button></div>
-    <div id="settings-page-1" class="dialog-page">
-      <label class="setting-row"><span><strong>輕柔音效</strong><small>翻頁清響，預設關閉</small></span><input type="checkbox" id="setting-sound" role="switch"></label>
-      <label class="setting-row"><span><strong>減少動態效果</strong><small>關閉呼吸與翻頁轉場</small></span><input type="checkbox" id="setting-motion" role="switch"></label>
-      <button class="text-button motion-system" id="motion-system">動態效果跟隨系統</button>
-      <label class="setting-row"><span><strong>觸覺回饋</strong><small>支援手機的輕微震動</small></span><input type="checkbox" id="setting-haptics" role="switch"></label>
+  <dialog id="poster-dialog" class="poster-dialog" aria-labelledby="poster-title">
+    <div class="dialog-header">
+      <h2 id="poster-title">把這一頁，留在身邊</h2>
+      <button class="icon-button" data-close="poster-dialog" aria-label="關閉日簽預覽"><svg class="icon"><use href="#i-close"/></svg></button>
     </div>
-    <div id="settings-page-2" class="dialog-page" hidden>
-      <div class="settings-about"><span class="tiny-star">✧</span><p>收藏與足跡留在這部裝置。<br>移除 App 或清除資料將無法復原。</p></div>
-      <div class="settings-links"><button class="text-button" id="about-button">內容與隱私說明<svg class="icon"><use href="#i-chevron"/></svg></button><button class="text-button danger-text" id="clear-data">清除本機閱讀資料</button></div>
-      <p class="app-version">奇蹟之書 · 1.1.0</p>
-    </div>
-    <button id="settings-page-toggle" class="text-button dialog-page-toggle" type="button">更多設定 →</button>
+    <div id="poster-preview" class="poster-preview"></div>
+    <p class="poster-help" id="poster-help">正在製作日簽…</p>
+    <button id="poster-save" class="primary-button" disabled><svg class="icon"><use href="#i-share"/></svg>分享／保存日簽</button>
   </dialog>
-  <dialog id="source-dialog" aria-labelledby="source-title">
-    <div class="dialog-header"><h2 id="source-title">關於這一頁</h2><button class="icon-button" data-close="source-dialog" aria-label="關閉內容說明"><svg class="icon"><use href="#i-close"/></svg></button></div>
-    <div class="source-copy">
-      <div id="source-page-1" class="dialog-page"><span class="content-badge">原始金句 · 364 則</span><p>標題依提供的文章保留，內文由原始圖片轉錄並校對，統一繁體顯示；不加入延伸導讀。</p><p>隸書：中華民國教育部，CC BY-ND 3.0 TW。原字型未修改；未收錄字元由正風毛筆補字。</p><a id="source-link" class="text-button" target="_blank" rel="noopener noreferrer" hidden>查看對應來源文章 ↗</a></div>
-      <div id="source-page-2" class="dialog-page" hidden><h3>你的閱讀，留在你的裝置</h3><p>不設帳號、廣告或分析追蹤。收藏、足跡與偏好存於本機；網頁版載入需要網路。</p><p>系統分享與來源網站由你選擇的外部服務處理。Android 已停用自動備份；清除資料無法復原。</p><p class="quiet-label">版本 1.1.0 · <a href="privacy.html" target="_blank" rel="noopener">完整隱私說明 ↗</a></p></div>
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title">
+    <div class="dialog-header">
+      <h2 id="confirm-title">清除閱讀資料？</h2>
+      <button class="icon-button" data-close="confirm-dialog" aria-label="取消"><svg class="icon"><use href="#i-close"/></svg></button>
     </div>
-    <button id="source-page-toggle" class="text-button dialog-page-toggle" type="button">隱私說明 →</button>
+    <p id="confirm-copy">這將移除本機收藏與閱讀足跡，無法復原。</p>
+    <div class="confirm-actions">
+      <button class="secondary-button" data-close="confirm-dialog">保留資料</button>
+      <button class="primary-button" id="confirm-clear">確認清除</button>
+    </div>
   </dialog>
-  <dialog id="poster-dialog" class="poster-dialog" aria-labelledby="poster-title"><div class="dialog-header"><h2 id="poster-title">把這一頁，留在身邊</h2><button class="icon-button" data-close="poster-dialog" aria-label="關閉日簽預覽"><svg class="icon"><use href="#i-close"/></svg></button></div><div id="poster-preview" class="poster-preview"></div><p class="poster-help" id="poster-help">正在製作日簽…</p><button id="poster-save" class="primary-button" disabled><svg class="icon"><use href="#i-share"/></svg>分享／保存日簽</button></dialog>
-  <dialog id="confirm-dialog" aria-labelledby="confirm-title"><div class="dialog-header"><h2 id="confirm-title">清除閱讀資料？</h2><button class="icon-button" data-close="confirm-dialog" aria-label="取消"><svg class="icon"><use href="#i-close"/></svg></button></div><p id="confirm-copy">這將移除本機收藏與閱讀足跡，無法復原。</p><div class="confirm-actions"><button class="secondary-button" data-close="confirm-dialog">保留資料</button><button class="primary-button" id="confirm-clear">確認清除</button></div></dialog>
   <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
   <div class="sr-only" id="announcer" role="status" aria-live="polite"></div>
   <script type="module" src="app.js"></script>

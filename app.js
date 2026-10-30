@@ -66,9 +66,9 @@ function applySettings() {
   document.documentElement.dataset.reducedMotion = String(reducedMotion);
   if (reducedMotion) motion.cancelAll();
   audio.setEnabled(sound);
-  $('setting-sound').checked = sound;
-  $('setting-motion').checked = reducedMotion;
-  $('setting-haptics').checked = haptics;
+  if ($('setting-sound')) $('setting-sound').checked = sound;
+  if ($('setting-motion')) $('setting-motion').checked = reducedMotion;
+  if ($('setting-haptics')) $('setting-haptics').checked = haptics;
   $('sound-button').setAttribute('aria-pressed', String(persisted.settings.music));
   $('sound-button').setAttribute('aria-label', persisted.settings.music ? '關閉背景音樂' : '開啟背景音樂');
 }
@@ -138,7 +138,14 @@ function dealCards() {
   $('number-cards').classList.add('dealt');
   announce('三張數字卡片已展開，請選擇與你有共鳴的一張。');
 }
-function showSelection() { tab = 'today'; setView('select'); dealCards(); }
+function showSelection(pushState = true) {
+  tab = 'today';
+  setView('select');
+  dealCards();
+  if (pushState && window.location.hash !== '#select') {
+    history.pushState({ view: 'select' }, '', '#select');
+  }
+}
 function enterRitual() {
   stopHold(); showSelection();
   audio.chime(); haptic(persisted.settings.haptics);
@@ -186,7 +193,7 @@ function refreshFavorite() {
   $('favorite-button').setAttribute('aria-pressed', String(active));
   $('favorite-button').querySelector('span').textContent = active ? '已收藏' : '收藏';
 }
-function openQuote(day) {
+function openQuote(day, pushState = true) {
   if (busy) return;
   const item = dayQuote(quotes, day);
   if (!item) { toast('這一頁的資料暫時無法使用。'); return; }
@@ -197,7 +204,10 @@ function openQuote(day) {
   displayed = Object.freeze({ ...item });
   tab = 'today';
   $('reading-day').textContent = `DAY ${String(item.day).padStart(3, '0')}`;
-  $('reading-theme').textContent = item.theme;
+  if ($('reading-theme')) {
+    $('reading-theme').textContent = item.theme;
+    $('reading-theme').hidden = false;
+  }
   $('reading-title').textContent = item.title;
   $('reading-title').hidden = false;
   $('reading-quote').hidden = false;
@@ -214,6 +224,9 @@ function openQuote(day) {
   persist();
   readingPart = 0;
   setView('reading', false, false);
+  if (pushState && window.location.hash !== `#day=${item.day}`) {
+    history.pushState({ view: 'reading', day: item.day }, '', `#day=${item.day}`);
+  }
   const direction = previousDay === null ? 0 : Math.sign(day - previousDay);
   motion.play($('reading-paper'), [
     { opacity: .2, transform: `translate(${direction * 12}px, ${direction ? 0 : 9}px) rotate(${direction * .35}deg)` },
@@ -375,13 +388,7 @@ for (const dialog of document.querySelectorAll('dialog')) {
   });
 }
 document.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', () => closeDialog(button.dataset.close)));
-function openSources() {
-  setDialogPage('source', false);
-  const source = displayed?.sourceUrl;
-  $('source-link').hidden = !source;
-  if (source) $('source-link').href = source; else $('source-link').removeAttribute('href');
-  openDialog('source-dialog', $('settings-dialog').open ? $('about-button') : $('source-button'));
-}
+
 async function showPoster() {
   if (!displayed) return;
   const snapshot = displayed;
@@ -421,7 +428,7 @@ function askClear(historyOnly) {
   };
   $('confirm-title').textContent = historyOnly ? '清除閱讀足跡？' : '清除閱讀資料？';
   $('confirm-copy').textContent = historyOnly ? '這將移除本機閱讀足跡，收藏仍會保留。此操作無法復原。' : '這將移除本機收藏與閱讀足跡，閱讀偏好仍會保留。此操作無法復原。';
-  openDialog('confirm-dialog', historyOnly ? $('clear-history') : $('clear-data'));
+  openDialog('confirm-dialog', $('clear-history'));
 }
 
 $('hold-button').addEventListener('pointerdown', beginHold);
@@ -471,35 +478,23 @@ $('poster-save').addEventListener('click', async () => {
   finally { if (token === posterToken) $('poster-save').disabled = !poster; }
 });
 $('poster-dialog').addEventListener('close', () => { posterToken++; poster = null; posterQuote = null; $('poster-preview').replaceChildren(); $('poster-preview').removeAttribute('aria-busy'); });
-$('source-button').addEventListener('click', openSources);
-$('settings-button').addEventListener('click', event => { setDialogPage('settings', false); openDialog('settings-dialog', event.currentTarget); });
+
+
 $('sound-button').addEventListener('click', () => {
   persisted.settings.music = !persisted.settings.music;
   applySettings(); persist();
   if (persisted.settings.music) void music.play(); else { resumeMusic = false; music.pause(); }
 });
-$('setting-sound').addEventListener('change', event => setSetting('sound', event.target.checked));
-$('setting-motion').addEventListener('change', event => setSetting('reducedMotion', event.target.checked));
-$('motion-system').addEventListener('click', () => {
-  hasSavedMotion = false;
-  persisted.settings.followSystemMotion = true;
-  persisted.settings.reducedMotion = motionPreference.matches;
-  applySettings(); persist(); toast('動態效果已跟隨裝置設定');
-});
-$('setting-haptics').addEventListener('change', event => setSetting('haptics', event.target.checked));
-$('about-button').addEventListener('click', openSources);
-$('clear-data').addEventListener('click', () => askClear(false));
+
+
+
+
+
+
 $('clear-history').addEventListener('click', () => askClear(true));
 $('library-prev').addEventListener('click', () => { libraryPage--; renderLibrary(tab, true); });
 $('library-next').addEventListener('click', () => { libraryPage++; renderLibrary(tab, true); });
-function setDialogPage(name, second) {
-  $(`${name}-page-1`).hidden = second;
-  $(`${name}-page-2`).hidden = !second;
-  $(`${name}-page-toggle`).textContent = second ? '← 返回' : name === 'source' ? '隱私說明 →' : '更多設定 →';
-  motion.cancelWithin($(`${name}-dialog`));
-  if ($(`${name}-dialog`).open) motion.reveal($(`${name}-page-${second ? 2 : 1}`), 'dialog-page');
-}
-for (const name of ['settings', 'source']) $(`${name}-page-toggle`).addEventListener('click', () => setDialogPage(name, !$(`${name}-page-1`).hidden));
+
 $('confirm-clear').addEventListener('click', () => confirmAction?.());
 document.querySelectorAll('.nav-item').forEach(button => button.addEventListener('click', () => {
   if (!quotes.length) return;
@@ -513,6 +508,30 @@ document.addEventListener('visibilitychange', () => {
   else if (resumeMusic && persisted.settings.music) { resumeMusic = false; void music.play(); }
 });
 window.addEventListener('blur', () => { stopHold(); audio.stop(); });
+
+window.addEventListener('popstate', event => {
+  const openDialogEl = [...document.querySelectorAll('dialog[open]')].at(-1);
+  if (openDialogEl) {
+    closeDialog(openDialogEl.id);
+    return;
+  }
+  const state = event.state;
+  if (!state || state.view === 'focus') {
+    tab = 'today';
+    setView('focus', false, true);
+  } else if (state.view === 'select') {
+    tab = 'today';
+    setView('select', false, true);
+  } else if (state.view === 'reading' && state.day) {
+    openQuote(state.day, false);
+  } else if (state.view === 'library') {
+    renderLibrary(state.tab || 'favorites');
+  } else {
+    tab = 'today';
+    setView('focus', false, true);
+  }
+});
+
 window.MiracleAppBack = () => {
   const open = [...document.querySelectorAll('dialog[open]')].at(-1);
   if (open) { closeDialog(open.id); return true; }
@@ -548,9 +567,23 @@ async function initialize() {
     await document.fonts.load('16px "正風毛筆"', '蹟');
     if (token !== initializationToken) return;
     quotes = data;
+    const hash = window.location.hash;
+    const dayMatch = hash.match(/#day=(\d+)/);
+    if (dayMatch) {
+      const targetDay = Number(dayMatch[1]);
+      if (targetDay >= 1 && targetDay <= TOTAL_DAYS) {
+        openQuote(targetDay, false);
+        return;
+      }
+    }
     tab = 'today'; setView('focus', false);
   } catch (error) { if (token === initializationToken) { console.warn('Bundled quote data could not be loaded.', error); quotes = []; setView('error', false); } }
-  finally { if (token === initializationToken) $('retry-button').disabled = false; }
+  finally {
+    if (token === initializationToken) $('retry-button').disabled = false;
+    if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+  }
 }
 $('retry-button').addEventListener('click', initialize);
 initialize();

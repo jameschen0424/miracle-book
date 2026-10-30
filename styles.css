@@ -166,7 +166,8 @@ body,button,input,select,textarea{font-family:var(--serif)}
 .reading-toolbar{height:44px;min-height:44px;margin:0;flex:none}
 .reading-toolbar .text-button,.page-navigation .text-button,.source-button{min-height:44px}
 .page-navigation{min-height:44px}
-.paper-top #reading-theme{display:none}
+.reading-theme-bar{flex:none;text-align:center;margin:0 0 4px}
+.reading-theme-tag{font:11px/1.4 var(--serif);letter-spacing:1.8px;color:var(--cinnabar);opacity:.92;display:inline-block;padding:1px 8px;border-bottom:1px solid rgba(152,61,50,.2)}
 .reading-paper[data-motion]::before{content:"";position:absolute;left:10px;right:10px;top:9px;height:1px;background:linear-gradient(90deg,transparent,#983d3280,transparent);transform-origin:left;animation:ink-flow .34s var(--ease) both;pointer-events:none}
 @keyframes ink-flow{from{opacity:0;transform:scaleX(.15)}55%{opacity:1}to{opacity:0;transform:scaleX(1)}}
 .number-choice.chosen::after{border-color:#983d3280}

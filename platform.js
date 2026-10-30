@@ -48,7 +48,11 @@ export async function haptic(enabled) {
 }
 
 export function quoteText(quote) {
-  return `《奇蹟之書》DAY ${String(quote.day).padStart(3, '0')}\n\n${quote.title}\n\n${quote.quote}\n\n${quote.sourceUrl}`;
+  return `《奇蹟之書》DAY ${String(quote.day).padStart(3, '0')}
+
+${quote.title}
+
+${quote.quote}`;
 }
 
 export async function copyText(text) {
