@@ -1,0 +1,21 @@
+{
+  "name": "奇蹟之書 · 留一頁給自己",
+  "short_name": "奇蹟之書",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#eee8d9",
+  "theme_color": "#eee8d9",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
