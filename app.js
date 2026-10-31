@@ -20,9 +20,6 @@ let displayed = null;
 let busy = false;
 let choiceTimer = null;
 let choiceToken = 0;
-let holdFrame = null;
-let holding = false;
-let holdStarted = 0;
 let toastTimer = null;
 let storageWarned = false;
 let poster = null;
@@ -89,18 +86,10 @@ function cancelCardChoice() {
   document.querySelectorAll('.number-choice').forEach(card => { card.disabled = false; card.classList.remove('chosen'); });
   $('random-button').disabled = false;
 }
-function stopHold() {
-  holding = false;
-  cancelAnimationFrame(holdFrame); holdFrame = null;
-  $('hold-button').style.removeProperty('--hold-progress');
-  $('hold-button').classList.remove('holding');
-  document.querySelector('.book-scene').classList.remove('is-holding');
-  $('hold-label').textContent = '按住，開啟一頁指引';
-}
 function setView(next, focus = true, animate = true) {
   motion.cancelWithin($('main-content'));
   cancelAnimationFrame(readingFrame); readingFrame = null;
-  cancelCardChoice(); stopHold();
+  cancelCardChoice();
   if (view === 'focus' && next !== 'focus') audio.stop();
   view = next;
   document.querySelector('.app-shell').dataset.view = next;
@@ -147,24 +136,9 @@ function showSelection(pushState = true) {
   }
 }
 function enterRitual() {
-  stopHold(); showSelection();
+  if (busy || !quotes.length) return;
+  showSelection();
   audio.chime(); haptic(persisted.settings.haptics);
-}
-function beginHold(event) {
-  if (event.button !== 0 || holding || busy) return;
-  holding = true; holdStarted = performance.now();
-  $('hold-button').setPointerCapture?.(event.pointerId);
-  $('hold-button').classList.add('holding');
-  document.querySelector('.book-scene').classList.add('is-holding');
-  $('hold-label').textContent = '慢慢呼吸，聽見自己…';
-  const step = now => {
-    if (!holding) return;
-    const progress = Math.min(1, (now - holdStarted) / 1200);
-    $('hold-button').style.setProperty('--hold-progress', String(progress));
-    if (progress >= 1) enterRitual();
-    else holdFrame = requestAnimationFrame(step);
-  };
-  holdFrame = requestAnimationFrame(step);
 }
 function chooseCard(index) {
   if (busy || view !== 'select' || !Number.isInteger(offeredDays[index])) return;
@@ -208,7 +182,7 @@ function openQuote(day, pushState = true) {
     $('reading-theme').textContent = item.theme;
     $('reading-theme').hidden = false;
   }
-  $('reading-title').textContent = item.title;
+  $('reading-title').textContent = `DAY ${item.day}｜${item.title}`;
   $('reading-title').hidden = false;
   $('reading-quote').hidden = false;
   $('reading-view').setAttribute('aria-label', `第 ${item.day} 天，${item.title}`);
@@ -274,7 +248,9 @@ function paginateReading() {
   };
   const titleMeasure = makeMeasure($('reading-title'));
   const bodyMeasure = makeMeasure($('reading-quote'));
-  const title = [...displayed.title], body = [...displayed.quote];
+  // The day belongs to the visible title as well as the page metadata.
+  const title = [...`DAY ${displayed.day}｜${displayed.title}`], body = [...displayed.quote];
+  titleMeasure.style.paddingBottom = getComputedStyle($('reading-title')).paddingBottom;
   const gap = parseFloat(getComputedStyle(content).rowGap) || 0;
   const height = (node, text) => { node.textContent = text; return node.getBoundingClientRect().height; };
   const fit = (node, chars, offset, available) => {
@@ -431,10 +407,7 @@ function askClear(historyOnly) {
   openDialog('confirm-dialog', $('clear-history'));
 }
 
-$('hold-button').addEventListener('pointerdown', beginHold);
-for (const event of ['pointerup', 'pointercancel', 'lostpointercapture']) $('hold-button').addEventListener(event, stopHold);
-$('hold-button').addEventListener('click', event => { if (event.detail === 0) enterRitual(); });
-$('skip-button').addEventListener('click', showSelection);
+$('taiji-button').addEventListener('click', enterRitual);
 $('select-back').addEventListener('click', () => setView('focus'));
 $('choose-again').addEventListener('click', showSelection);
 $('empty-read').addEventListener('click', showSelection);
@@ -504,10 +477,10 @@ document.querySelectorAll('.nav-item').forEach(button => button.addEventListener
 document.querySelector('.brand').addEventListener('click', event => { event.preventDefault(); tab = 'today'; setView(quotes.length ? 'focus' : view); });
 document.addEventListener('visibilitychange', () => {
   document.documentElement.dataset.background = String(document.hidden);
-  if (document.hidden) { motion.cancelAll(); stopHold(); cancelCardChoice(); audio.stop(); resumeMusic = resumeMusic || music.state.playing || music.state.loading; music.pause(); }
+  if (document.hidden) { motion.cancelAll(); cancelCardChoice(); audio.stop(); resumeMusic = resumeMusic || music.state.playing || music.state.loading; music.pause(); }
   else if (resumeMusic && persisted.settings.music) { resumeMusic = false; void music.play(); }
 });
-window.addEventListener('blur', () => { stopHold(); audio.stop(); });
+window.addEventListener('blur', () => { audio.stop(); });
 
 window.addEventListener('popstate', event => {
   const openDialogEl = [...document.querySelectorAll('dialog[open]')].at(-1);
@@ -538,7 +511,7 @@ window.MiracleAppBack = () => {
   if (view !== 'focus' && quotes.length) { tab = 'today'; setView('focus'); return true; }
   return false;
 };
-window.addEventListener('pagehide', () => { motion.cancelAll(); cancelCardChoice(); stopHold(); audio.stop(); resumeMusic = music.state.playing || music.state.loading || resumeMusic; music.pause(); });
+window.addEventListener('pagehide', () => { motion.cancelAll(); cancelCardChoice(); audio.stop(); resumeMusic = music.state.playing || music.state.loading || resumeMusic; music.pause(); });
 window.addEventListener('pageshow', () => { if (resumeMusic && persisted.settings.music && !document.hidden) { resumeMusic = false; void music.play(); } });
 const startBackground = event => {
   if (event.target.closest?.('#sound-button') || document.hidden) return;

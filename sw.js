@@ -1,4 +1,4 @@
-const CACHE_NAME = 'miracle-book-v1';
+const CACHE_NAME = 'miracle-book-v6';
 const PRECACHE_URLS = [
   './',
   'index.html',
@@ -11,6 +11,7 @@ const PRECACHE_URLS = [
   'icon-512.png',
   'data/quotes.json',
   'assets/taiji-ink.svg',
+  'assets/ink-ring.svg',
   'assets/ink-landscape.png',
   'assets/motion.mjs',
   'assets/music-player.mjs',

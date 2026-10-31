@@ -126,6 +126,7 @@ dialog[open]{display:flex;flex-direction:column;gap:10px}
 :root{--serif:"教育部隸書","正風毛筆",serif;--sans:var(--serif)}
 body,button,input,select,textarea{font-family:var(--serif)}
 .brand small{font-size:9px;letter-spacing:1.4px;line-height:1.8}
+.brand-fallback-glyph{display:inline-block;font-family:"正風毛筆",serif;font-size:.88em;line-height:1;vertical-align:-.06em}
 .date-line{font-size:12px;line-height:1.6}.quiet-label{font-size:12px}
 .source-button{font-size:11px}.setting-row small,.settings-about p{font-size:12px}
 .draw-intro{margin:8px 0 12px;text-align:center}
@@ -185,3 +186,69 @@ button[aria-busy=true]{cursor:progress}
 #reading-content #reading-title{flex:none;font-size:clamp(28px,3.8dvh,34px);line-height:1.5;letter-spacing:1px;color:var(--ink);text-align:center;white-space:pre-line;margin:0}
 #reading-content .reading-quote{height:auto;flex:none;font-size:clamp(26px,3.3dvh,30px);line-height:1.65;letter-spacing:.8px;color:var(--ink-soft)}
 @media(max-height:640px){#reading-content{gap:10px}#reading-content #reading-title{font-size:28px;line-height:1.45}#reading-content .reading-quote{font-size:26px;line-height:1.55}}
+
+/* Soft ink washes and breathing room keep the words at the centre. */
+.app-header{border-bottom-color:transparent;background:linear-gradient(90deg,transparent,rgba(71,79,64,.23),transparent) left bottom/100% 1px no-repeat}
+.reading-paper{border:0;border-radius:2px 10px 3px 8px;background-color:rgba(249,246,236,.91);background-image:radial-gradient(ellipse at 3% 6%,rgba(91,105,83,.12),transparent 34%),radial-gradient(ellipse at 94% 98%,rgba(101,109,88,.11),transparent 38%),linear-gradient(115deg,rgba(255,255,255,.22),transparent 46%);background-size:auto;box-shadow:0 10px 28px rgba(49,54,43,.10),2px 2px 8px rgba(49,54,43,.04)}
+.reading-paper::after{inset:7px;border:0;background:linear-gradient(90deg,transparent,rgba(89,98,79,.23),transparent) top/100% 1px no-repeat,linear-gradient(90deg,transparent,rgba(89,98,79,.19),transparent) bottom/100% 1px no-repeat;opacity:.7}
+.reading-theme-tag{border:0;background:linear-gradient(90deg,transparent,rgba(152,61,50,.27),transparent) center bottom/100% 1px no-repeat;padding-bottom:6px}
+#reading-content{gap:clamp(18px,3dvh,28px)}
+#reading-content #reading-title{font-size:clamp(21px,3dvh,28px);line-height:1.5;letter-spacing:.8px;padding-bottom:clamp(14px,2.2dvh,20px);background:radial-gradient(ellipse at center,rgba(152,61,50,.5),rgba(92,100,82,.23) 35%,transparent 72%) center bottom/96px 2px no-repeat}
+#reading-content .reading-quote{font-size:clamp(25px,3.5dvh,32px);line-height:1.75;letter-spacing:1px}
+.number-choice{border:0;border-radius:4px 12px 5px 10px;background:radial-gradient(ellipse at 15% 8%,rgba(120,130,107,.19),transparent 42%),linear-gradient(155deg,rgba(250,247,237,.94),rgba(231,229,212,.88));box-shadow:0 8px 18px rgba(48,56,44,.11),inset 0 0 0 1px rgba(95,103,82,.14)}
+.number-choice::after{inset:7px;border:0;background:linear-gradient(90deg,transparent,rgba(91,100,79,.25),transparent) top/100% 1px no-repeat,linear-gradient(90deg,transparent,rgba(91,100,79,.2),transparent) bottom/100% 1px no-repeat}
+.number-choice.chosen{box-shadow:0 10px 24px rgba(152,61,50,.16),inset 0 0 0 1px rgba(152,61,50,.3)}
+.bottom-nav{border-top:0;background:linear-gradient(180deg,rgba(238,232,217,.55),rgba(238,232,217,.92));box-shadow:0 -1px 0 rgba(92,100,82,.08)}
+.page-navigation,.library-heading,.library-row{border-color:rgba(89,98,79,.12)}
+@media(max-height:640px){#reading-content{gap:12px}#reading-content #reading-title{font-size:21px;padding-bottom:10px}#reading-content .reading-quote{font-size:26px;line-height:1.55}}
+
+/* Ink on paper: the reading surface dissolves into the landscape instead of
+   sitting inside a hard rectangular frame. Content stays above the artwork. */
+.reading-paper{isolation:isolate;overflow:hidden;border-radius:0;box-shadow:none;background-color:transparent;background-image:radial-gradient(ellipse 52% 53% at 50% 49%,rgba(250,247,236,.99) 0%,rgba(249,246,235,.97) 66%,rgba(249,246,235,.72) 82%,transparent 100%)}
+.reading-paper::after{inset:auto 0 0;height:42%;border:0;background:url('assets/ink-landscape.png') center bottom/100% auto no-repeat;opacity:.13;mask-image:radial-gradient(ellipse 50% 85% at 50% 68%,black 10%,transparent 100%);-webkit-mask-image:radial-gradient(ellipse 50% 85% at 50% 68%,black 10%,transparent 100%);z-index:-1}
+.paper-top{color:#73796c;letter-spacing:1.8px}
+.paper-star-ornament{color:var(--cinnabar);opacity:.8}
+.reading-theme-tag{background:none;border:0;padding:0;color:#9b4b3e;letter-spacing:1px}
+#reading-content #reading-title{background:radial-gradient(ellipse at center,rgba(151,67,53,.65),rgba(151,67,53,.24) 35%,transparent 72%) center bottom/72px 2px no-repeat}
+.paper-bottom{color:#777d6d}
+.page-navigation{border:0;background:linear-gradient(90deg,transparent,rgba(76,85,68,.24),transparent) center top/100% 1px no-repeat}
+.bottom-nav{box-shadow:none;background:radial-gradient(ellipse 75% 100% at 50% 100%,rgba(241,235,221,.95),rgba(241,235,221,.65) 72%,transparent)}
+.nav-item.active i{width:5px;height:5px;border-radius:50%;transform:none}
+
+/* Three loose ink circles suggest brush impressions, with no boxed grid. */
+.number-cards{padding-inline:0;gap:4px;overflow:visible}
+.number-choice{isolation:isolate;border:0;border-radius:0;box-shadow:none;background:transparent;gap:clamp(4px,1dvh,10px)}
+.number-choice::before{content:"";position:absolute;left:50%;top:50%;width:min(115%,145px);aspect-ratio:1;transform:translate(-50%,-50%);background:url('assets/ink-ring.svg') center/contain no-repeat;z-index:-1;pointer-events:none;transition:transform .3s var(--ease),opacity .3s;opacity:.85}
+.number-choice::after{inset:9% 3%;border:0;background:radial-gradient(ellipse at 50% 52%,rgba(246,243,230,.68),rgba(246,243,230,.2) 52%,transparent 72%);z-index:-2;opacity:1}
+.number-choice:nth-child(1)::before{transform:translate(-50%,-50%) rotate(-9deg)}
+.number-choice:nth-child(3)::before{transform:translate(-50%,-50%) rotate(10deg)}
+.number-choice.chosen{background:transparent;box-shadow:none}
+.number-choice.chosen::before{transform:translate(-50%,-50%) scale(1.08) rotate(8deg);opacity:1}
+.card-order{color:var(--cinnabar);font-size:13px}
+.card-taiji{width:23px;height:23px;opacity:.68}
+.number-value{font-size:clamp(32px,5.6dvh,50px);line-height:1.25}
+.card-unit{color:#616b5b}
+.card-brush-line{width:29px;height:2px;background:linear-gradient(90deg,transparent,rgba(147,67,53,.55),transparent)}
+.card-foot{font-size:11px;color:#697060}
+.redeal-button{border:0;box-shadow:none;background:radial-gradient(ellipse 48% 80% at center,rgba(245,241,229,.88),transparent);color:var(--ink-soft)}
+.library-heading,.library-row{border:0;background-image:linear-gradient(90deg,rgba(83,92,74,.18),rgba(83,92,74,.08) 65%,transparent);background-position:left bottom;background-repeat:no-repeat;background-size:100% 1px}
+@media(max-width:359px){.number-cards{gap:1px}.number-choice::before{width:120%}.number-value{font-size:33px}}
+@media(max-height:640px){.number-choice{height:175px;gap:4px}.number-value{font-size:34px}.card-taiji{width:22px;height:22px}}
+
+/* Larger ink impressions and clearer selection text on phone screens. */
+.number-choice{gap:clamp(7px,1.2dvh,12px)}
+.number-choice::before{width:min(125%,160px)}
+.card-order{font-size:15px}
+.card-taiji{width:27px;height:27px}
+.number-value{font-size:clamp(39px,6.4dvh,55px);line-height:1.25}
+.card-foot{font-size:14px;letter-spacing:.6px;color:#545d50}
+.draw-intro>p:last-child,.selection-note{font-size:14px;line-height:1.65;color:#50594e}
+.redeal-button{font-size:16px}
+@media(max-width:359px){.number-choice::before{width:125%}.number-value{font-size:39px}}
+@media(max-height:640px){.number-choice{height:175px;gap:6px}.number-value{font-size:39px}.card-taiji{width:25px;height:25px}.card-order{font-size:15px}.card-foot,.selection-note,.draw-intro>p:last-child{font-size:13px}}
+
+/* The taiji itself is the entry control. */
+.focus-view .book-object{padding:0;border:0;background:transparent;cursor:pointer;touch-action:manipulation}
+.focus-view .book-object:focus-visible{outline:2px solid var(--cinnabar);outline-offset:5px;border-radius:50%}
+.focus-view .book-object:active{transform:scale(.97)}
+.taiji-hint{text-align:center;font:15px/1.8 var(--serif);letter-spacing:1.5px;color:var(--ink-soft);padding:5px 0 10px}
