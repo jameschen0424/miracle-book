@@ -39,7 +39,7 @@
   </defs></svg>
   <div class="app-shell">
     <header class="app-header">
-      <a class="brand" href="#today" aria-label="奇蹟之書首頁"><span class="brand-mark"><svg class="icon"><use href="#i-taiji"/></svg></span><span>奇<span class="brand-fallback-glyph">蹟</span>之書<small>THE MIRACLE BOOK</small></span></a>
+      <a class="brand" href="#today" aria-label="奇蹟之書首頁"><span class="brand-mark"><svg class="icon"><use href="#i-taiji"/></svg></span><span><span class="brand-name">奇蹟之書</span><small>THE MIRACLE BOOK</small></span></a>
       <div class="header-actions">
         <button class="icon-button" id="sound-button" aria-label="關閉背景音樂" aria-pressed="true"><svg class="icon"><use href="#i-music"/></svg><span class="sound-off" aria-hidden="true"></span></button>
       </div>
@@ -49,24 +49,26 @@
       <section id="error-view" class="empty-state" hidden><svg class="icon"><use href="#i-book"/></svg><h1>這一頁暫時無法開啟</h1><p>資料載入未完成，請再試一次。</p><button class="primary-button" id="retry-button">重新載入</button></section>
       <section id="focus-view" class="view focus-view" aria-labelledby="focus-title" hidden>
         <div class="date-line"><span class="tiny-star">✧</span><time id="today-date"></time><span class="line"></span><span>每日一頁</span></div>
-        <div class="intro"><p class="eyebrow">陰陽相生 · 動靜有時</p><h1 id="focus-title" tabindex="-1">一念靜，<br>萬象<span>生。</span></h1><p class="intro-copy">陰陽流轉，自有其序。<br>靜下心，翻開屬於此刻的一頁。</p></div>
+        <div class="intro"><p class="eyebrow">陰陽相生 · 動靜有時</p><h1 id="focus-title" tabindex="-1">一念靜，萬象<span>生。</span></h1><p class="intro-copy">陰陽流轉，自有其序。<br>靜下心，翻開屬於此刻的一頁。</p></div>
         <div class="book-scene ink-scene">
           <span class="ink-inscription" aria-hidden="true">萬物負陰而抱陽</span>
           <div class="ink-halo" aria-hidden="true"></div>
           <div class="trigram-ring" aria-hidden="true"><span>☰</span><span>☱</span><span>☲</span><span>☳</span><span>☷</span><span>☶</span><span>☵</span><span>☴</span></div>
-          <button class="book-object taiji-orbit" id="taiji-button" type="button" aria-label="輕觸太極，開啟選卡"><img class="taiji-art" src="assets/taiji-ink.svg" alt="" width="272" height="272"></button>
+          <button class="book-object taiji-orbit" id="taiji-button" type="button" aria-label="輕觸太極，抽取今日指引"><svg class="taiji-art" viewBox="0 0 512 512" aria-hidden="true"><path d="M369 402C285 457 159 430 98 347C41 266 63 151 149 94C215 50 313 55 381 109C446 161 463 258 424 328C447 254 426 174 366 128C301 78 215 80 154 121C83 170 66 260 113 329C166 406 280 433 369 402Z" fill="#272c28"/><path d="M377 394C302 447 188 427 129 371C73 317 62 244 88 179M136 105C212 52 312 67 374 114C422 151 448 213 438 270" fill="none" stroke="#272c28" stroke-width="4" stroke-linecap="round" opacity=".48"/><path d="M97 180C78 229 85 288 112 329M161 99C221 69 287 75 333 94" fill="none" stroke="#eee8d9" stroke-width="3" opacity=".7"/><g class="taiji-core"><circle cx="256" cy="256" r="125" fill="#eee8d9" stroke="#272c28" stroke-width="3"/><path d="M256 131A125 125 0 0 0 256 381A62.5 62.5 0 0 0 256 256A62.5 62.5 0 0 1 256 131Z" fill="#272c28"/><circle cx="256" cy="193.5" r="17" fill="#272c28"/><circle cx="256" cy="318.5" r="17" fill="#eee8d9"/></g><path d="M391 376L420 378L418 408L389 405Z" fill="#983d32" opacity=".93"/><path d="M396 382L414 384L412 400L395 399Z" fill="none" stroke="#eee8d9" stroke-width="2" opacity=".65"/><circle cx="405" cy="391" r="3" fill="#eee8d9" opacity=".75"/></svg></button>
           <span class="ink-seal" aria-hidden="true">靜<br>心</span>
           <span class="scene-caption" aria-hidden="true">一 陰 一 陽 之 謂 道</span>
         </div>
-        <div class="ritual-actions"><p class="taiji-hint">輕觸太極，開啟一頁指引</p></div>
+        <div class="ritual-actions"><p class="taiji-hint" id="taiji-hint">輕觸太極，開啟一頁指引</p></div>
         <p class="home-footnote"><span></span>不急著找到答案，先聽見自己的聲音<span></span></p>
       </section>
-      <section id="select-view" class="view select-view" aria-labelledby="select-title" hidden>
-        <button class="text-button back-button" id="select-back"><svg class="icon flip"><use href="#i-arrow"/></svg>回到靜心</button>
-        <div class="section-intro draw-intro"><p class="eyebrow">三念之間 · 一頁相逢</p><h1 id="select-title" tabindex="-1">哪個數字，與你共鳴？</h1><p>不必尋找理由，選擇此刻最有感覺的一張。</p></div>
-        <div id="number-cards" class="number-cards" role="group" aria-label="選擇一張數字卡片"><button class="number-choice" type="button" data-day="" aria-label="數字卡片壹"><span class="card-order">壹</span><svg class="icon card-taiji" aria-hidden="true"><use href="#i-taiji"/></svg><span class="number-value">—</span><span class="card-brush-line" aria-hidden="true"></span><span class="card-foot">隨心一選</span></button><button class="number-choice" type="button" data-day="" aria-label="數字卡片貳"><span class="card-order">貳</span><svg class="icon card-taiji" aria-hidden="true"><use href="#i-taiji"/></svg><span class="number-value">—</span><span class="card-brush-line" aria-hidden="true"></span><span class="card-foot">隨心一選</span></button><button class="number-choice" type="button" data-day="" aria-label="數字卡片參"><span class="card-order">參</span><svg class="icon card-taiji" aria-hidden="true"><use href="#i-taiji"/></svg><span class="number-value">—</span><span class="card-brush-line" aria-hidden="true"></span><span class="card-foot">隨心一選</span></button></div>
-        <p class="selection-note">輕觸一張卡片，翻開屬於你的指引。</p>
-        <button class="secondary-button redeal-button" id="random-button"><svg class="icon"><use href="#i-spark"/></svg><span>再換三張</span></button>
+      <section id="reveal-view" class="view reveal-view" aria-label="抽取的天數" hidden>
+        <div class="day-reveal" role="status" aria-live="polite">
+          <span class="day-reveal-kicker">此刻，與這一頁相遇</span>
+          <span class="day-reveal-number" id="reveal-day"></span>
+          <span class="day-reveal-title" id="reveal-title"></span>
+          <span class="day-reveal-line" aria-hidden="true"></span>
+          <span class="day-reveal-caption">靜心，迎接今日的指引</span>
+        </div>
       </section>
       <section id="reading-view" class="view reading-view" aria-labelledby="reading-title" hidden>
         <div class="reading-toolbar"><button class="text-button" id="choose-again"><svg class="icon flip"><use href="#i-arrow"/></svg>重新抽卡</button><span class="quiet-label">一頁，一次相遇</span></div>

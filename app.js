@@ -1,10 +1,10 @@
-import { TOTAL_DAYS, loadState, saveState, dayQuote, drawThreeDays, toggleFavorite, recordVisit, validateQuotes } from './core.mjs';
+import { TOTAL_DAYS, loadState, saveState, dayQuote, pickRandomDay, toggleFavorite, recordVisit, validateQuotes } from './core.mjs';
 import { SoundEngine, haptic, quoteText, copyText, shareText, createPoster, sharePoster } from './platform.js';
 import { BackgroundMusic } from './assets/music-player.mjs';
 import { MotionDirector } from './assets/motion.mjs';
 
 const $ = id => document.getElementById(id);
-const views = ['loading', 'error', 'focus', 'select', 'reading', 'library'];
+const views = ['loading', 'error', 'focus', 'reveal', 'reading', 'library'];
 const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
 let storage;
 try { storage = window.localStorage; } catch { storage = null; }
@@ -15,7 +15,6 @@ const audio = new SoundEngine();
 let quotes = [];
 let view = 'loading';
 let tab = 'today';
-let offeredDays = [];
 let displayed = null;
 let busy = false;
 let choiceTimer = null;
@@ -79,17 +78,19 @@ motionPreference.addEventListener('change', event => {
   if (!hasSavedMotion) { persisted.settings.reducedMotion = event.matches; applySettings(); }
 });
 
-function cancelCardChoice() {
+function cancelDraw() {
   choiceToken++;
   clearTimeout(choiceTimer); choiceTimer = null;
   busy = false;
-  document.querySelectorAll('.number-choice').forEach(card => { card.disabled = false; card.classList.remove('chosen'); });
-  $('random-button').disabled = false;
+  $('taiji-button').disabled = false;
+  $('taiji-button').removeAttribute('aria-busy');
+  $('taiji-button').classList.remove('is-drawing');
+  $('taiji-hint').textContent = '輕觸太極，開啟一頁指引';
 }
 function setView(next, focus = true, animate = true) {
   motion.cancelWithin($('main-content'));
   cancelAnimationFrame(readingFrame); readingFrame = null;
-  cancelCardChoice();
+  cancelDraw();
   if (view === 'focus' && next !== 'focus') audio.stop();
   view = next;
   document.querySelector('.app-shell').dataset.view = next;
@@ -111,55 +112,31 @@ function setView(next, focus = true, animate = true) {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }
 }
-function dealCards() {
-  if (busy || !quotes.length) return;
-  offeredDays = drawThreeDays(TOTAL_DAYS);
-  document.querySelectorAll('.number-choice').forEach((card, index) => {
-    const day = offeredDays[index];
-    card.dataset.day = String(day);
-    card.querySelector('.number-value').textContent = String(day).padStart(3, '0');
-    card.setAttribute('aria-label', `選擇第 ${day} 天的數字卡片`);
-    card.classList.remove('chosen');
-    card.disabled = false;
-  });
-  $('number-cards').classList.remove('dealt');
-  void $('number-cards').offsetWidth;
-  $('number-cards').classList.add('dealt');
-  announce('三張數字卡片已展開，請選擇與你有共鳴的一張。');
-}
-function showSelection(pushState = true) {
-  tab = 'today';
-  setView('select');
-  dealCards();
-  if (pushState && window.location.hash !== '#select') {
-    history.pushState({ view: 'select' }, '', '#select');
-  }
-}
 function enterRitual() {
-  if (busy || !quotes.length) return;
-  showSelection();
-  audio.chime(); haptic(persisted.settings.haptics);
-}
-function chooseCard(index) {
-  if (busy || view !== 'select' || !Number.isInteger(offeredDays[index])) return;
-  const day = offeredDays[index];
+  if (busy || !quotes.length || view !== 'focus') return;
   busy = true;
   const token = ++choiceToken;
-  document.querySelectorAll('.number-choice').forEach((card, cardIndex) => {
-    card.disabled = true;
-    card.classList.toggle('chosen', cardIndex === index);
-  });
-  document.querySelectorAll('.number-choice').forEach((card, cardIndex) => {
-    if (cardIndex !== index) motion.play(card, [{ opacity: 1 }, { opacity: .42, transform: 'translateY(5px) scale(.97)' }], { name: 'card-release', duration: 320 });
-  });
-  $('random-button').disabled = true;
+  $('taiji-button').disabled = true;
+  $('taiji-button').setAttribute('aria-busy', 'true');
+  $('taiji-button').classList.add('is-drawing');
+  $('taiji-hint').textContent = '靜心片刻，正在開啟你的指引…';
+  announce('正在抽取指引，請稍候。');
   haptic(persisted.settings.haptics);
-  const reveal = () => {
-    if (token !== choiceToken || view !== 'select') return;
-    busy = false; openQuote(day);
-  };
-  if (persisted.settings.reducedMotion) reveal();
-  else choiceTimer = setTimeout(reveal, 320);
+  choiceTimer = setTimeout(() => {
+    if (token !== choiceToken || view !== 'focus') return;
+    const day = pickRandomDay(TOTAL_DAYS);
+    $('reveal-day').textContent = `DAY ${String(day).padStart(3, '0')}`;
+    $('reveal-title').textContent = dayQuote(quotes, day).title;
+    setView('reveal', false);
+    announce(`第 ${day} 天，${dayQuote(quotes, day).title}`);
+    const revealToken = choiceToken;
+    busy = true;
+    choiceTimer = setTimeout(() => {
+      if (revealToken !== choiceToken || view !== 'reveal') return;
+      busy = false;
+      openQuote(day);
+    }, 3200);
+  }, 3000);
 }
 function refreshFavorite() {
   if (!displayed) return;
@@ -408,11 +385,8 @@ function askClear(historyOnly) {
 }
 
 $('taiji-button').addEventListener('click', enterRitual);
-$('select-back').addEventListener('click', () => setView('focus'));
-$('choose-again').addEventListener('click', showSelection);
-$('empty-read').addEventListener('click', showSelection);
-document.querySelectorAll('.number-choice').forEach((card, index) => card.addEventListener('click', () => chooseCard(index)));
-$('random-button').addEventListener('click', dealCards);
+$('choose-again').addEventListener('click', () => { tab = 'today'; setView('focus'); enterRitual(); });
+$('empty-read').addEventListener('click', () => { tab = 'today'; setView('focus'); });
 $('previous-button').addEventListener('click', () => { if (displayed?.day > 1) openQuote(displayed.day - 1); });
 $('next-button').addEventListener('click', () => { if (displayed?.day < TOTAL_DAYS) openQuote(displayed.day + 1); });
 $('favorite-button').addEventListener('click', () => {
@@ -477,7 +451,7 @@ document.querySelectorAll('.nav-item').forEach(button => button.addEventListener
 document.querySelector('.brand').addEventListener('click', event => { event.preventDefault(); tab = 'today'; setView(quotes.length ? 'focus' : view); });
 document.addEventListener('visibilitychange', () => {
   document.documentElement.dataset.background = String(document.hidden);
-  if (document.hidden) { motion.cancelAll(); cancelCardChoice(); audio.stop(); resumeMusic = resumeMusic || music.state.playing || music.state.loading; music.pause(); }
+  if (document.hidden) { motion.cancelAll(); cancelDraw(); if (view === 'reveal') setView('focus', false, false); audio.stop(); resumeMusic = resumeMusic || music.state.playing || music.state.loading; music.pause(); }
   else if (resumeMusic && persisted.settings.music) { resumeMusic = false; void music.play(); }
 });
 window.addEventListener('blur', () => { audio.stop(); });
@@ -494,7 +468,7 @@ window.addEventListener('popstate', event => {
     setView('focus', false, true);
   } else if (state.view === 'select') {
     tab = 'today';
-    setView('select', false, true);
+    setView('focus', false, true);
   } else if (state.view === 'reading' && state.day) {
     openQuote(state.day, false);
   } else if (state.view === 'library') {
@@ -511,7 +485,7 @@ window.MiracleAppBack = () => {
   if (view !== 'focus' && quotes.length) { tab = 'today'; setView('focus'); return true; }
   return false;
 };
-window.addEventListener('pagehide', () => { motion.cancelAll(); cancelCardChoice(); audio.stop(); resumeMusic = music.state.playing || music.state.loading || resumeMusic; music.pause(); });
+window.addEventListener('pagehide', () => { motion.cancelAll(); cancelDraw(); if (view === 'reveal') setView('focus', false, false); audio.stop(); resumeMusic = music.state.playing || music.state.loading || resumeMusic; music.pause(); });
 window.addEventListener('pageshow', () => { if (resumeMusic && persisted.settings.music && !document.hidden) { resumeMusic = false; void music.play(); } });
 const startBackground = event => {
   if (event.target.closest?.('#sound-button') || document.hidden) return;
@@ -537,7 +511,7 @@ async function initialize() {
     // Do not reveal a partially styled screen while the single bundled face is loading.
     const faces = await document.fonts.load('16px "教育部隸書"', '奇蹟之書陰陽靜心0123456789');
     if (!faces.length || faces.some(face => face.status !== 'loaded')) throw new Error('Bundled calligraphy font unavailable');
-    await document.fonts.load('16px "正風毛筆"', '蹟');
+    await document.fonts.load('16px "正風毛筆"', '奇蹟之書');
     if (token !== initializationToken) return;
     quotes = data;
     const hash = window.location.hash;

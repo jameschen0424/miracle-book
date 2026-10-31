@@ -252,3 +252,18 @@ button[aria-busy=true]{cursor:progress}
 .focus-view .book-object:focus-visible{outline:2px solid var(--cinnabar);outline-offset:5px;border-radius:50%}
 .focus-view .book-object:active{transform:scale(.97)}
 .taiji-hint{text-align:center;font:15px/1.8 var(--serif);letter-spacing:1.5px;color:var(--ink-soft);padding:5px 0 10px}
+
+/* One quiet spin, then the drawn day appears before the reading. */
+.focus-view .book-object{animation:none}
+.focus-view .book-object.is-drawing{opacity:1;animation:none}
+.focus-view .book-object.is-drawing .taiji-core{transform-box:fill-box;transform-origin:center;animation:draw-turn 3s cubic-bezier(.3,.05,.25,1) both}
+@keyframes draw-turn{from{transform:rotate(0deg)}to{transform:rotate(720deg)}}
+.reveal-view{display:flex;align-items:center;justify-content:center}
+.day-reveal{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(16px,3dvh,28px);width:100%;min-height:240px;text-align:center;background:radial-gradient(ellipse at center,rgba(250,247,235,.84),transparent 70%);animation:ink-reveal .65s var(--ease) both}
+.day-reveal-kicker,.day-reveal-caption{font:14px/1.7 var(--serif);letter-spacing:2px;color:var(--ink-soft)}
+.day-reveal-kicker{color:var(--cinnabar)}
+.day-reveal-number{font:clamp(40px,7dvh,64px)/1.4 var(--serif);letter-spacing:4px;color:var(--ink)}
+.day-reveal-line{width:76px;height:2px;background:linear-gradient(90deg,transparent,rgba(152,61,50,.6),transparent)}
+.day-reveal-title{max-width:min(100%,340px);padding:0 12px;text-align:center;font:clamp(21px,3.3dvh,28px)/1.55 var(--serif);letter-spacing:1px;overflow-wrap:anywhere;color:var(--ink)}
+.brand-name{font-family:"正風毛筆","教育部隸書",serif;white-space:nowrap}
+.focus-view .intro h1{font-size:clamp(22px,6.8vw,31px);letter-spacing:1px;white-space:nowrap;line-height:1.35}

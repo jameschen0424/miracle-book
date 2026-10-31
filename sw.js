@@ -1,4 +1,4 @@
-const CACHE_NAME = 'miracle-book-v6';
+const CACHE_NAME = 'miracle-book-v8';
 const PRECACHE_URLS = [
   './',
   'index.html',
